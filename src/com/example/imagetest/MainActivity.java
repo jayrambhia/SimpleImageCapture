@@ -37,7 +37,7 @@ public class MainActivity extends Activity {
 	private Mat mRgba;
 	private Mat finalImage;
 	String TAG="SimpleImageCapture";
-	File imgFile;
+	private File imgFile;
 			
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -52,6 +52,7 @@ public class MainActivity extends Activity {
 		mImageView=(ImageView) findViewById(R.id.imageView1);
 		System.loadLibrary("disp_img");
 		shutterButton.setOnClickListener((android.view.View.OnClickListener) new MyOnClickListener());
+		mImageView.setOnTouchListener(new TouchListener());
 		    
 	}
 
@@ -74,7 +75,7 @@ public class MainActivity extends Activity {
 	        {
 	   
 	        	// @Jay : Change this to part to full_URI
-		    	File imgFile = new  File((String) data.getExtras().get("full_URI"));
+		    	imgFile = new  File((String) data.getExtras().get("full_URI"));
 		    	Log.d("full_URI","url="+imgFile);
 		    	if(imgFile.exists())
 		    	{
@@ -107,17 +108,19 @@ public class MainActivity extends Activity {
 	 				// Pass these to the JNI function
 	 				float converted_xcoord=(event.getRawX()-mImageView.getLeft());
 	 				float converted_ycoord=(event.getRawY()-mImageView.getTop());
+	 				Log.d(TAG, "converted");
 	 				mRgba = new Mat();
 			    	finalImage = new Mat();
-			    	//String filename = "/mnt/sdcard/SimpleImageCapture/img_full7.jpg";
+			    	String filename = "/mnt/sdcard/SimpleImageCapture/img_full7.jpg";
+			    	Log.d(TAG,"Initialized Mat");
 			    	mRgba = Highgui.imread(imgFile.getAbsolutePath());
+			    	//mRgba = Highgui.imread(filename);
+			    	Log.d(TAG, "Image loaded");
 			    	//mRgba = Highgui.imread(filename);
 			    	getDisparity(mRgba.getNativeObjAddr(), finalImage.getNativeObjAddr(), (int)converted_xcoord, (int)converted_ycoord);
 			    	String colVal = String.valueOf(finalImage.cols());
 			    	Log.d("Cols", colVal);
 			    	Highgui.imwrite(imgFile.getAbsolutePath(), finalImage);
-
-
 	 			}
 	 			return false;
 	 		}
