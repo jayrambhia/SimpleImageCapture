@@ -19,13 +19,16 @@ import android.view.WindowManager;
 
 import android.widget.ImageButton;
 import android.widget.ImageView;
-
+import org.opencv.core.Mat;
+import org.opencv.highgui.*;
 public class MainActivity extends Activity {
 
 	
 	ImageButton shutterButton;
 	Bitmap mImageBitmap;
 	ImageView mImageView;
+	private Mat mRgba;
+	private Mat finalImage;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -38,7 +41,7 @@ public class MainActivity extends Activity {
 		
 		shutterButton=(ImageButton) findViewById(R.id.shutterButton);
 		mImageView=(ImageView) findViewById(R.id.imageView1);
-		
+		System.loadLibrary("disp_img");
 		shutterButton.setOnClickListener((android.view.View.OnClickListener) new MyOnClickListener());
 		    
 	}
@@ -62,8 +65,17 @@ public class MainActivity extends Activity {
 	        {
 	   
 	        	// @Jay : Change this to part to full_URI
-		    	File imgFile = new  File((String) data.getExtras().get("left_URI"));
+		    	File imgFile = new  File((String) data.getExtras().get("full_URI"));
 		    	Log.d("full_URI","url="+imgFile);
+		    	mRgba = new Mat();
+		    	finalImage = new Mat();
+		    	//String filename = "/mnt/sdcard/SimpleImageCapture/img_full7.jpg";
+		    	mRgba = Highgui.imread(imgFile.getAbsolutePath());
+		    	//mRgba = Highgui.imread(filename);
+		    	getDisparity(mRgba.getNativeObjAddr(), finalImage.getNativeObjAddr());
+		    	String colVal = String.valueOf(finalImage.cols());
+		    	Log.d("Cols", colVal);
+		    	Highgui.imwrite(imgFile.getAbsolutePath(), finalImage);
 		    	if(imgFile.exists())
 		    	{
 			    	Bitmap myBitmap = BitmapFactory.decodeFile(imgFile.getAbsolutePath());
@@ -84,4 +96,5 @@ public class MainActivity extends Activity {
 		}
 	     };
 
+    public native void getDisparity(long matAddrRgba, long matAddrfinalImage);
 }

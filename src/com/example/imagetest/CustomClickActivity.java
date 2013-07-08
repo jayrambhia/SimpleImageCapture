@@ -108,6 +108,7 @@ public class CustomClickActivity extends Activity implements SurfaceHolder.Callb
                 case LoaderCallbackInterface.SUCCESS:
                 {
                     Log.i(TAG, "OpenCV loaded successfully");
+                    System.loadLibrary("disp_img");
                     //mOpenCvCameraView.enableView();
                 } break;
                 default:
@@ -601,6 +602,6 @@ private Runnable Timer_Tick = new Runnable() {
 		      Log.d(TAG, "onPictureTaken - jpeg");
 		    }
 		  };
-		
+	public native void getDisparity(long matAddrRgba, long matAddrfinalImage);
 	
 }
