@@ -35,6 +35,7 @@ public class MainActivity extends Activity {
 	Bitmap mImageBitmap;
 	ImageView mImageView;
 	private Mat mRgba;
+	private Mat disp;
 	private Mat finalImage;
 	String TAG="SimpleImageCapture";
 	private File imgFile;
@@ -79,6 +80,12 @@ public class MainActivity extends Activity {
 		    	imgFile = new  File((String) data.getExtras().get("full_URI"));
 		    	File leftimgFile = new File((String) data.getExtras().get("left_URI"));
 		    	Log.d("full_URI","url="+imgFile);
+		    	mRgba = new Mat();
+		    	disp = new Mat();
+		    	mRgba = Highgui.imread(imgFile.getAbsolutePath());
+		    	Log.d(TAG, "Image loaded");
+		    	getDisparity(mRgba.getNativeObjAddr(), disp.getNativeObjAddr());
+		    	Log.d(TAG, "Got Disparity");
 		    	if(imgFile.exists())
 		    	{
 			    	myBitmap = BitmapFactory.decodeFile(leftimgFile.getAbsolutePath());
@@ -111,15 +118,8 @@ public class MainActivity extends Activity {
 	 				float converted_xcoord=(event.getRawX()-mImageView.getLeft());
 	 				float converted_ycoord=(event.getRawY()-mImageView.getTop());
 	 				Log.d(TAG, "converted");
-	 				mRgba = new Mat();
 			    	finalImage = new Mat();
-			    	String filename = "/mnt/sdcard/SimpleImageCapture/img_full7.jpg";
-			    	Log.d(TAG,"Initialized Mat");
-			    	mRgba = Highgui.imread(imgFile.getAbsolutePath());
-			    	//mRgba = Highgui.imread(filename);
-			    	Log.d(TAG, "Image loaded");
-			    	//mRgba = Highgui.imread(filename);
-			    	getDisparity(mRgba.getNativeObjAddr(), finalImage.getNativeObjAddr(), (int)converted_xcoord, (int)converted_ycoord);
+			    	getThreshold(mRgba.getNativeObjAddr(), disp.getNativeObjAddr(), finalImage.getNativeObjAddr(), (int)converted_xcoord, (int)converted_ycoord);
 			    	String colVal = String.valueOf(finalImage.cols());
 			    	Log.d("Cols", colVal);
 			    	Highgui.imwrite(imgFile.getAbsolutePath(), finalImage);
@@ -131,5 +131,6 @@ public class MainActivity extends Activity {
 
 	 	  }
 
-    public native void getDisparity(long matAddrRgba, long matAddrfinalImage, int ji1, int ji2);
+    public native void getDisparity(long matAddrRgba, long matAddrfinalImage);
+    public native void getThreshold(long matAddrRgba, long matAddrDisp, long matAddrfinalImage, int ji1, int ji2);
 }

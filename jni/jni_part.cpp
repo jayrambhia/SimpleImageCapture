@@ -26,24 +26,36 @@ int getGray(Mat& img)
 	return 1;
 }
 extern "C" {
-JNIEXPORT void JNICALL Java_com_example_imagetest_MainActivity_getDisparity(JNIEnv*, jobject, jlong addrRgba, jlong finalImage, jint ji1, jint ji2);
+JNIEXPORT void JNICALL Java_com_example_imagetest_MainActivity_getThreshold(JNIEnv*, jobject, jlong addrBgr, jlong addrDisp, jlong finalImage, jint ji1, jint ji2);
+JNIEXPORT void JNICALL Java_com_example_imagetest_MainActivity_getDisparity(JNIEnv*, jobject, jlong addrRgba, jlong finalImage);
 
-JNIEXPORT void JNICALL Java_com_example_imagetest_MainActivity_getDisparity(JNIEnv*, jobject, jlong addrRgba, jlong finalImage, jint ji1, jint ji2)
+JNIEXPORT void JNICALL Java_com_example_imagetest_MainActivity_getDisparity(JNIEnv*, jobject, jlong addrRgba, jlong finalImage)
 {
     Mat& img = *(Mat*)addrRgba;
-    Mat g1, g2, disp, foreground, background;
-    Mat& finImg = *(Mat*)finalImage;
-    Point point1;
-    int x, y;
-    x = ji1;
-    y = ji2;
-    point1 = Point(x, y); // to get from android
+    Mat g1, g2;
+    Mat& disp = *(Mat*)finalImage;
     cvtColor(img, img, CV_RGBA2BGR);
     Mat img1(img, Rect(0, 0, img.cols/2, img.rows));
     Mat img2(img, Rect(img.cols/2, 0, img.cols/2, img.rows));
     cvtColor(img1, g1, CV_BGR2GRAY);
     cvtColor(img2, g2, CV_BGR2GRAY);
     getDisp(g1, g2, disp);
+    //cvtColor(finImg, finImg, CV_BGR2RGBA);
+    return;
+}
+JNIEXPORT void JNICALL Java_com_example_imagetest_MainActivity_getThreshold(JNIEnv*, jobject, jlong addrBgr, jlong addrDisp, jlong finalImage, jint ji1, jint ji2)
+{
+	Mat& img = *(Mat*)addrBgr;
+	Mat& disp = *(Mat*)addrDisp;
+	Mat background;
+	Mat& finImg = *(Mat*)finalImage;
+	Mat img1(img, Rect(0, 0, img.cols/2, img.rows));
+    Mat img2(img, Rect(img.cols/2, 0, img.cols/2, img.rows));
+	Point point1;
+    int x, y;
+    x = ji1;
+    y = ji2;
+    point1 = Point(x, y); // to get from android
     getThreshold(disp, point1, 10, finImg);
     segmentForeground(img1, finImg, background);
     getMaskedGrayImage(img1, background);
@@ -53,7 +65,6 @@ JNIEXPORT void JNICALL Java_com_example_imagetest_MainActivity_getDisparity(JNIE
     //getMaskedImage(img1, foreground);
     addFgBg(finImg, background, finImg);
     imwrite("/mnt/sdcard/SimpleImageCapture/img_fin.jpg", finImg);
-    //cvtColor(finImg, finImg, CV_BGR2RGBA);
     return;
 }
 }
