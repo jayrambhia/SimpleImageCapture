@@ -38,6 +38,7 @@ public class MainActivity extends Activity {
 	private Mat finalImage;
 	String TAG="SimpleImageCapture";
 	private File imgFile;
+	private Bitmap myBitmap;
 			
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -76,10 +77,11 @@ public class MainActivity extends Activity {
 	   
 	        	// @Jay : Change this to part to full_URI
 		    	imgFile = new  File((String) data.getExtras().get("full_URI"));
+		    	File leftimgFile = new File((String) data.getExtras().get("left_URI"));
 		    	Log.d("full_URI","url="+imgFile);
 		    	if(imgFile.exists())
 		    	{
-			    	Bitmap myBitmap = BitmapFactory.decodeFile(imgFile.getAbsolutePath());
+			    	myBitmap = BitmapFactory.decodeFile(leftimgFile.getAbsolutePath());
 				    mImageView.setImageBitmap(myBitmap);
 		
 			    }
@@ -121,6 +123,8 @@ public class MainActivity extends Activity {
 			    	String colVal = String.valueOf(finalImage.cols());
 			    	Log.d("Cols", colVal);
 			    	Highgui.imwrite(imgFile.getAbsolutePath(), finalImage);
+			    	myBitmap = BitmapFactory.decodeFile(imgFile.getAbsolutePath());
+				    mImageView.setImageBitmap(myBitmap);
 	 			}
 	 			return false;
 	 		}
