@@ -26,15 +26,18 @@ int getGray(Mat& img)
 	return 1;
 }
 extern "C" {
-JNIEXPORT void JNICALL Java_com_example_imagetest_MainActivity_getDisparity(JNIEnv*, jobject, jlong addrRgba, jlong finalImage);
+JNIEXPORT void JNICALL Java_com_example_imagetest_MainActivity_getDisparity(JNIEnv*, jobject, jlong addrRgba, jlong finalImage, jint ji1, jint ji2);
 
-JNIEXPORT void JNICALL Java_com_example_imagetest_MainActivity_getDisparity(JNIEnv*, jobject, jlong addrRgba, jlong finalImage)
+JNIEXPORT void JNICALL Java_com_example_imagetest_MainActivity_getDisparity(JNIEnv*, jobject, jlong addrRgba, jlong finalImage, jint ji1, jint ji2)
 {
     Mat& img = *(Mat*)addrRgba;
     Mat g1, g2, disp, foreground, background;
     Mat& finImg = *(Mat*)finalImage;
     Point point1;
-    point1 = Point(469,263); // to get from android
+    int x, y;
+    x = ji1;
+    y = ji2;
+    point1 = Point(x, y); // to get from android
     cvtColor(img, img, CV_RGBA2BGR);
     Mat img1(img, Rect(0, 0, img.cols/2, img.rows));
     Mat img2(img, Rect(img.cols/2, 0, img.cols/2, img.rows));

@@ -17,6 +17,13 @@ import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 
+import android.view.Menu;
+
+import android.view.MotionEvent;
+import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
+
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import org.opencv.core.Mat;
@@ -29,7 +36,9 @@ public class MainActivity extends Activity {
 	ImageView mImageView;
 	private Mat mRgba;
 	private Mat finalImage;
-	
+	String TAG="SimpleImageCapture";
+	File imgFile;
+			
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -67,15 +76,6 @@ public class MainActivity extends Activity {
 	        	// @Jay : Change this to part to full_URI
 		    	File imgFile = new  File((String) data.getExtras().get("full_URI"));
 		    	Log.d("full_URI","url="+imgFile);
-		    	mRgba = new Mat();
-		    	finalImage = new Mat();
-		    	//String filename = "/mnt/sdcard/SimpleImageCapture/img_full7.jpg";
-		    	mRgba = Highgui.imread(imgFile.getAbsolutePath());
-		    	//mRgba = Highgui.imread(filename);
-		    	getDisparity(mRgba.getNativeObjAddr(), finalImage.getNativeObjAddr());
-		    	String colVal = String.valueOf(finalImage.cols());
-		    	Log.d("Cols", colVal);
-		    	Highgui.imwrite(imgFile.getAbsolutePath(), finalImage);
 		    	if(imgFile.exists())
 		    	{
 			    	Bitmap myBitmap = BitmapFactory.decodeFile(imgFile.getAbsolutePath());
@@ -85,7 +85,7 @@ public class MainActivity extends Activity {
 	        }
 	    }
 	}
-
+	
 	class MyOnClickListener implements View.OnClickListener{
 
 		public void onClick(View v) {
@@ -95,6 +95,34 @@ public class MainActivity extends Activity {
 		
 		}
 	     };
+	     class TouchListener implements View.OnTouchListener{
 
-    public native void getDisparity(long matAddrRgba, long matAddrfinalImage);
+	 		@Override
+	 		public boolean onTouch(View v, MotionEvent event) {
+
+	 			if(event.getAction() == MotionEvent.ACTION_DOWN) 
+	 			{
+	 				Log.d(TAG,"X ="+(event.getRawX()-mImageView.getLeft())+"  Y= "+(event.getRawY()-mImageView.getTop())); // For landscape orientation,i.e max val of x is 800 and y max value is 480 ..
+
+	 				// Pass these to the JNI function
+	 				float converted_xcoord=(event.getRawX()-mImageView.getLeft());
+	 				float converted_ycoord=(event.getRawY()-mImageView.getTop());
+	 				mRgba = new Mat();
+			    	finalImage = new Mat();
+			    	//String filename = "/mnt/sdcard/SimpleImageCapture/img_full7.jpg";
+			    	mRgba = Highgui.imread(imgFile.getAbsolutePath());
+			    	//mRgba = Highgui.imread(filename);
+			    	getDisparity(mRgba.getNativeObjAddr(), finalImage.getNativeObjAddr(), (int)converted_xcoord, (int)converted_ycoord);
+			    	String colVal = String.valueOf(finalImage.cols());
+			    	Log.d("Cols", colVal);
+			    	Highgui.imwrite(imgFile.getAbsolutePath(), finalImage);
+
+
+	 			}
+	 			return false;
+	 		}
+
+	 	  }
+
+    public native void getDisparity(long matAddrRgba, long matAddrfinalImage, int ji1, int ji2);
 }
