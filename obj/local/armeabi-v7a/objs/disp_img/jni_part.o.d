@@ -60,7 +60,9 @@
  /home/jay/Android_OpenCV/android-ndk-r8d/sources/cxx-stl/gnu-libstdc++/4.6/include/valarray \
  /home/jay/Android_OpenCV/OpenCV-2.4.4-android-sdk/sdk/native/jni/include/opencv2/contrib/openfabmap.hpp \
  /home/jay/Android_OpenCV/android-ndk-r8d/sources/cxx-stl/gnu-libstdc++/4.6/include/list \
- /home/jay/Android_OpenCV/android-ndk-r8d/sources/cxx-stl/gnu-libstdc++/4.6/include/set
+ /home/jay/Android_OpenCV/android-ndk-r8d/sources/cxx-stl/gnu-libstdc++/4.6/include/set \
+ /home/jay/Android_OpenCV/OpenCV-2.4.4-android-sdk/sdk/native/jni/include/opencv2/photo/photo.hpp \
+ /home/jay/Android_OpenCV/OpenCV-2.4.4-android-sdk/sdk/native/jni/include/opencv2/photo/photo_c.h
 
 /home/jay/Android_OpenCV/android-ndk-r8d/platforms/android-8/arch-arm/usr/include/jni.h:
 
@@ -183,3 +185,7 @@
 /home/jay/Android_OpenCV/android-ndk-r8d/sources/cxx-stl/gnu-libstdc++/4.6/include/list:
 
 /home/jay/Android_OpenCV/android-ndk-r8d/sources/cxx-stl/gnu-libstdc++/4.6/include/set:
+
+/home/jay/Android_OpenCV/OpenCV-2.4.4-android-sdk/sdk/native/jni/include/opencv2/photo/photo.hpp:
+
+/home/jay/Android_OpenCV/OpenCV-2.4.4-android-sdk/sdk/native/jni/include/opencv2/photo/photo_c.h:

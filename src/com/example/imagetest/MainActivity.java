@@ -37,8 +37,10 @@ public class MainActivity extends Activity {
 	private Mat mRgba;
 	private Mat disp;
 	private Mat finalImage;
+	private Mat limg;
 	String TAG="SimpleImageCapture";
 	private File imgFile;
+	private File leftimgFile;
 	private Bitmap myBitmap;
 			
 	@Override
@@ -78,14 +80,17 @@ public class MainActivity extends Activity {
 	   
 	        	// @Jay : Change this to part to full_URI
 		    	imgFile = new  File((String) data.getExtras().get("full_URI"));
-		    	File leftimgFile = new File((String) data.getExtras().get("left_URI"));
+		    	leftimgFile = new File((String) data.getExtras().get("left_URI"));
 		    	Log.d("full_URI","url="+imgFile);
 		    	mRgba = new Mat();
 		    	disp = new Mat();
+		    	limg = new Mat();
 		    	mRgba = Highgui.imread(imgFile.getAbsolutePath());
 		    	Log.d(TAG, "Image loaded");
 		    	getDisparity(mRgba.getNativeObjAddr(), disp.getNativeObjAddr());
+		    	crop5(mRgba.getNativeObjAddr(), limg.getNativeObjAddr());
 		    	Log.d(TAG, "Got Disparity");
+		    	Highgui.imwrite(leftimgFile.getAbsolutePath(), limg);
 		    	if(imgFile.exists())
 		    	{
 			    	myBitmap = BitmapFactory.decodeFile(leftimgFile.getAbsolutePath());
@@ -117,13 +122,17 @@ public class MainActivity extends Activity {
 	 				// Pass these to the JNI function
 	 				float converted_xcoord=(event.getRawX()-mImageView.getLeft());
 	 				float converted_ycoord=(event.getRawY()-mImageView.getTop());
+	 				converted_xcoord=(converted_xcoord/mImageView.getWidth())*500;
+	 				converted_ycoord=(converted_ycoord/mImageView.getHeight())*500;
+	 				Log.d(TAG, String.valueOf(converted_ycoord));
+	 				Log.d(TAG, String.valueOf(converted_xcoord));
 	 				Log.d(TAG, "converted");
 			    	finalImage = new Mat();
 			    	getThreshold(mRgba.getNativeObjAddr(), disp.getNativeObjAddr(), finalImage.getNativeObjAddr(), (int)converted_xcoord, (int)converted_ycoord);
 			    	String colVal = String.valueOf(finalImage.cols());
 			    	Log.d("Cols", colVal);
-			    	Highgui.imwrite(imgFile.getAbsolutePath(), finalImage);
-			    	myBitmap = BitmapFactory.decodeFile(imgFile.getAbsolutePath());
+			    	Highgui.imwrite(leftimgFile.getAbsolutePath(), finalImage);
+			    	myBitmap = BitmapFactory.decodeFile(leftimgFile.getAbsolutePath());
 				    mImageView.setImageBitmap(myBitmap);
 	 			}
 	 			return false;
@@ -132,5 +141,6 @@ public class MainActivity extends Activity {
 	 	  }
 
     public native void getDisparity(long matAddrRgba, long matAddrfinalImage);
+    public native void crop5(long matAddrRgba, long matAddrfinalImage);
     public native void getThreshold(long matAddrRgba, long matAddrDisp, long matAddrfinalImage, int ji1, int ji2);
 }
